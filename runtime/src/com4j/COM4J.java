@@ -583,6 +583,19 @@ public abstract class COM4J {
                 return;
             }
         }
+        // If run within the development enviroment (e.g. Eclipse), the DLL will 
+        // be in the filesystem relative to the COM4J.class file
+        else if (url.startsWith("file:")) {
+            File classFile = new File(url.substring(5));
+            String fileName = "com4j-" + System.getProperty("os.arch") + ".dll";
+            File dllFile = new File(classFile.getParentFile(), fileName);
+            if (dllFile.exists() == false) {
+                LOGGER.log(Level.WARNING, "Failed to find com4j.dll: " + dllFile);
+                } else {
+                System.load(dllFile.getPath());
+                return;
+            }
+        }
 
         UnsatisfiedLinkError error = new UnsatisfiedLinkError("Unable to load com4j.dll");
         error.initCause(cause);
